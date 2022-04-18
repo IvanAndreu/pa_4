@@ -2,7 +2,7 @@ Programming assignment 4
 ================
 
 **Author**: Ivan Andreu Rascon  
-**Date**: Last update: 2022-04-17 22:43:45
+**Date**: Last update: 2022-04-17 22:46:23
 
 # Overview
 
@@ -349,7 +349,7 @@ English of English in comparison with Spanish-English bilinguals.
 
 plot = filter(datos, word == "kuku" | word == "puku" | word == "tuku")
 ggplot(plot, aes(x=word, y=f2, fill=group)) + 
-    geom_boxplot()+ geom_point( size=3, color="red", fill=alpha("black", 0.2), alpha=0.4, shape=21, stroke=2)+
+    geom_boxplot()+ geom_point( size=3, color="red", fill=alpha("yellow", 0.2), alpha=0.4, shape=21, stroke=2)+
   facet_wrap(~group)+
   labs(title = "F2 of /u/ stop  and group", y = "F2", x = "Stop type /p/ /t/ /k/")
 ```
@@ -361,7 +361,7 @@ ggplot(plot, aes(x=word, y=f2, fill=group)) +
 
 plot = filter(datos, word == "keke" | word == "peke" | word == "teke")
 ggplot(plot, aes(x=word, y=f2, fill=group)) + 
-    geom_boxplot()+ geom_point( size=3, color="red", fill=alpha("black", 0.2), alpha=0.4, shape=21, stroke=2)+
+    geom_boxplot()+ geom_point( size=3, color="red", fill=alpha("green", 0.2), alpha=0.4, shape=21, stroke=2)+
   facet_wrap(~group)+
   labs(title = "F2 of /e/ stop  and group", y = "F2", x = "Stop type /p/ /t/ /k/")
 ```
@@ -373,7 +373,7 @@ ggplot(plot, aes(x=word, y=f2, fill=group)) +
 
 plot = filter(datos, word == "kiki" | word == "piki" | word == "tiki")
 ggplot(plot, aes(x=word, y=f2, fill=group)) + 
-    geom_boxplot()+ geom_point( size=3, color="red", fill=alpha("black", 0.2), alpha=0.4, shape=21, stroke=2)+
+    geom_boxplot()+ geom_point( size=3, color="red", fill=alpha("blue", 0.2), alpha=0.4, shape=21, stroke=2)+
   facet_wrap(~group)+
   labs(title = "F2 of /i/ stop  and group", y = "F2", x = "Stop type /p/ /t/ /k/")
 ```
@@ -385,7 +385,7 @@ ggplot(plot, aes(x=word, y=f2, fill=group)) +
 
 plot = filter(datos, word == "koko" | word == "poko" | word == "toko")
 ggplot(plot, aes(x=word, y=f2, fill=group)) + 
-    geom_boxplot()+ geom_point( size=3, color="red", fill=alpha("black", 0.2), alpha=0.4, shape=21, stroke=2)+
+    geom_boxplot()+ geom_point( size=3, color="red", fill=alpha("blue", 0.2), alpha=0.4, shape=21, stroke=2)+
   facet_wrap(~group)+
   labs(title = "F2 of /o/ stop  and group", y = "F2", x = "Stop type /p/ /t/ /k/")
 ```
@@ -398,7 +398,7 @@ ggplot(plot, aes(x=word, y=f2, fill=group)) +
 plot = filter(datos, word == "kaka" | word == "paka" | word == "taka")
 ggplot(plot, aes(x=word, y=f2, fill=group)) + 
     geom_boxplot()+
-  facet_wrap(~group)+ geom_point( size=3, color="red", fill=alpha("black", 0.2), alpha=0.4, shape=21, stroke=2)+
+  facet_wrap(~group)+ geom_point( size=3, color="red", fill=alpha("blue", 0.2), alpha=0.4, shape=21, stroke=2)+
   labs(title = "F2 of /a/ stop  and group", y = "F2", x = "Stop type /p/ /t/ /k/")
 ```
 

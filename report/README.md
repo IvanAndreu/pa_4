@@ -2,7 +2,7 @@ Programming assignment 4
 ================
 
 **Author**: Ivan Andreu Rascon  
-**Date**: Last update: 2022-04-17 22:46:23
+**Date**: Last update: 2022-04-17 22:49:16
 
 # Overview
 
@@ -341,8 +341,7 @@ knitr::include_graphics('../images/en.png')
 
 ![](../images/en.png)<!-- -->
 
-As seen in Bradlow(1995) F1 and F2 values should be higher for native
-English of English in comparison with Spanish-English bilinguals.
+# As seen in Bradlow(1995) F1 and F2 values should be higher for native English of English in comparison with Spanish-English bilinguals.
 
 ``` r
 # Include some plots here

@@ -4,23 +4,24 @@ output: github_document
 
 ---
 
-**Author**: Your name here  
+**Author**: Ivan Andreu Rascon  
 **Date**: Last update: `r Sys.time()`
 
 
 # Overview
 
-<!-- 
-  Talk briefly about what you did here 
-  Describe your hypotheses
--->
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+# Description of the assignment
+
+In this programming assignment I worked on a relatively large project production of 6 participants. I used Praat to normalize the scale peak intensity, create textgrids and annotate them. After fixing the extra “#” on that made the code not work, adding the number of files and changing the names I calculated values for (f1, f2, vot) and put then on a CVS file. 
+
+# Hypothesis
+
+Based on the article I presented in class Bradlow (1995) F1  and F2 values should be higher for native English of English in comparison with Spanish-English bilinguals. 
+
+In relation with the VOTs analysis, the l2 learners, might have longer VOTs than the bilinguals, due to the stop consonant differences between Spanish and English. This is because Spanish has a short and lead lag, and English has short, long, and lead lag. 
+
+
 
 
 # Prep
@@ -28,20 +29,32 @@ proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 ## Libraries
 
 ```{r}
-#| label: load-libs
-#| echo: false 
-#| warning: false 
-#| message: false
-# Load libraries here
+```{r, 'load-libs', echo=T, warning=F, message=F}
+library(tidyverse)
+library(untidydata)
+library(ggplot2)
+library(readr)
+library(dplyr)
+library(knitr)
+library(here)
+```
+
+```
+
 
 ```
 
 ## Load data
 
 ```{r}
-#| label: load-data
-# You need to get all the files in the 'data' directory and combine them
-# Check previous examples we did in class 
+bi01 <- read_csv("../data/bi01.csv") 
+bi02 <- read_csv("../data/bi02.csv")
+bi03 <- read_csv("../data/bi03.csv")
+ne01 <- read_csv("../data/ne01.csv")
+ne02 <- read_csv("../data/ne02.csv")
+ne03 <- read_csv("../data/ne03.csv")
+
+datos = bind_rows(bi01, bi02, bi03, ne01, ne02, ne03)   
 
 ```
 
@@ -53,18 +66,68 @@ proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 # examples from class)
 # Create any other relevant variables here 
 
+datos = separate(data = datos, col = fileID, into = c("id", "word"), sep = "_")
+datos = separate(data = datos, col = word, into = c("word", "trial"), sep = "(?<=[A-Za-z])(?=[0-9])", extra = "drop", fill = "right")
+datos = separate(data = datos, col = id, into = c("group", "id"), sep = "(?<=[A-Za-z])(?=[0-9])")
+
+
+glimpse(datos)
+
 ```
 
 # Analysis
 
 ## Descriptives
 
+
+
+```{r, 'descriptive-stats2'}
+means = datos %>%
+  group_by(group) %>%
+  summarise(mean_f1 = mean(f1), sd_f1 = sd(f1), mean_f2 = mean(f2), sd_f2 = sd(f2), mean_vot = mean(vot), sd_vot = sd(vot), n = n())
+kable(means, caption = "**Means and SD per group**")
+```
+
+```{r, 'descriptive-stats3'}
+table <- datos %>%
+  group_by(group) %>%
+  summarise(mean_vot = mean(vot), sd_vot = sd(vot), n = n())
+kable(table, caption = "**Mean VOT per group**")
+```
+
+
+
 ```{r}
-#| label: descriptive-stats
-# Give some descriptive summaries of your data 
-# Display your descriptives in a table (try knitr::kable())
 
 ```
+-----
+
+
+```{r, 'descriptive-statss'}
+# Give some descriptive summaries of your data 
+# Display your descriptives in a table
+
+table <-datos %>%
+  group_by(group, word) %>%
+  summarize(meanf1 = mean(f1), sdf1 = sd(f1), meanf2 = mean(f2), sdf2 = sd(f2), meanvot = mean(vot), sdvot = sd(vot), n = n() )
+kable(table, caption = "table")
+
+
+
+table2 <-datos %>%
+  group_by(group, word) %>%
+  summarize(mean(vot), sd(vot))
+kable(table2, caption = "table2")
+```
+
+
+
+
+
+
+
+
+
 
 ## Visualization
 
@@ -75,18 +138,195 @@ proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 ```
 
-<!-- 
-Also include a professional looking figure illustrating an example of the acoustics 
-of the production data, i.e., a plot generated in praat.
-You decide what is relevant (something related to your hypothesis). 
-Think about where this file should be located in your project. 
-What location makes most sense in terms of organization? 
-How will you access the file (path) from this .Rmd file?
-If you need help consider the following sources: 
-  - Search 'Rmarkdown image' on google, stackoverflow, etc.
-  - Search the 'knitr' package help files in RStudio
-  - Search the internet for HTML code (not recommended, but it works)
-  - Check the code from my class presentations (may or may not be helpful)
+
+```{r}
+
+ggplot(datos, aes(x = group, y = vot)) +
+  geom_point(aes(color = group))
+
+```
+
+
+```{r}
+
+datos %>% 
+  ggplot(.,aes(x=vot, y=word, color=id))+
+  geom_point( size=3, color="green", fill=alpha("blue", 0.2), alpha=0.4, shape=21, stroke=2)
+
+
+```
+
+
+
+```{r}
+plot = filter(datos, word == "taka" | word == "teke" | word == "tiki" | word == "toko" | word == "tuku")
+ggplot(data = plot, aes(x=word, y=vot, color=group)) + 
+  geom_point( size=3, color="red", fill=alpha("black", 0.2), alpha=0.4, shape=21, stroke=2) +
+  labs(title = "VOT  function of vowel type and group", y = "VOT", x = "Vowel type")
+
+
+
+```
+
+
+
+Below I am including an image that represents F1 and F2 of /u/ in the first syllable of /kuku/ of a Spanish-English bilingual
+
+
+
+
+
+```{r}
+
+#Here I attach an image that represents F1 and F2 of /a/ in the first syllable of /kaka/ of a Spanish-English bilingual. VOT differences can algo be distinguished. 
+
+knitr::include_graphics('../images/bi.png')
+
+#Here I attach an image that represents F1 and F2 of /a/ in the first syllable of /kaka/ of a L2 native of english. VOT differences can also be distinguished. 
+
+#Native English speakers seem to have longer lag VOT than bilniguals.
+
+
+
+knitr::include_graphics('../images/en.png')
+```
+
+
+As seen in Bradlow(1995) F1  and F2 values should be higher for native English of English in comparison with Spanish-English bilinguals. 
+
+
+
+```{r}
+# Include some plots here
+
+plot = filter(datos, word == "kuku" | word == "puku" | word == "tuku")
+ggplot(plot, aes(x=word, y=f2, fill=group)) + 
+    geom_boxplot()+ geom_point( size=3, color="red", fill=alpha("black", 0.2), alpha=0.4, shape=21, stroke=2)+
+  facet_wrap(~group)+
+  labs(title = "F2 of /u/ stop  and group", y = "F2", x = "Stop type /p/ /t/ /k/")
+
+
+
+```
+
+
+
+```{r}
+# Include some plots here
+
+plot = filter(datos, word == "keke" | word == "peke" | word == "teke")
+ggplot(plot, aes(x=word, y=f2, fill=group)) + 
+    geom_boxplot()+ geom_point( size=3, color="red", fill=alpha("black", 0.2), alpha=0.4, shape=21, stroke=2)+
+  facet_wrap(~group)+
+  labs(title = "F2 of /e/ stop  and group", y = "F2", x = "Stop type /p/ /t/ /k/")
+
+
+
+```
+
+
+
+```{r}
+# Include some plots here
+
+plot = filter(datos, word == "kiki" | word == "piki" | word == "tiki")
+ggplot(plot, aes(x=word, y=f2, fill=group)) + 
+    geom_boxplot()+ geom_point( size=3, color="red", fill=alpha("black", 0.2), alpha=0.4, shape=21, stroke=2)+
+  facet_wrap(~group)+
+  labs(title = "F2 of /i/ stop  and group", y = "F2", x = "Stop type /p/ /t/ /k/")
+
+
+
+```
+
+
+
+```{r}
+# Include some plots here
+
+plot = filter(datos, word == "koko" | word == "poko" | word == "toko")
+ggplot(plot, aes(x=word, y=f2, fill=group)) + 
+    geom_boxplot()+ geom_point( size=3, color="red", fill=alpha("black", 0.2), alpha=0.4, shape=21, stroke=2)+
+  facet_wrap(~group)+
+  labs(title = "F2 of /o/ stop  and group", y = "F2", x = "Stop type /p/ /t/ /k/")
+
+
+
+```
+
+
+```{r}
+# Include some plots here
+
+plot = filter(datos, word == "kaka" | word == "paka" | word == "taka")
+ggplot(plot, aes(x=word, y=f2, fill=group)) + 
+    geom_boxplot()+
+  facet_wrap(~group)+ geom_point( size=3, color="red", fill=alpha("black", 0.2), alpha=0.4, shape=21, stroke=2)+
+  labs(title = "F2 of /a/ stop  and group", y = "F2", x = "Stop type /p/ /t/ /k/")
+
+
+
+```
+
+
+
+
+```{r}
+
+plot = filter(datos, word == "keke" | word == "peke" | word == "teke")
+ggplot(plot, aes(x=f2, y=f1, color = group, shape = group)) + 
+    geom_point(size=3, alpha=0.7)+
+  labs(title = "F1 and F2 of /e/ per group", y = "F1", x = "F2")
+
+
+
+```
+
+
+
+
+
+
+```{r}
+
+plot = filter(datos, word == "kiki" | word == "piki" | word == "tiki")
+ggplot(plot, aes(x=f2, y=f1, color = group, shape = group)) + 
+    geom_point(size=3, alpha=0.7)+
+  labs(title = "F1 and F2 of /i/ per group", y = "F1", x = "F2")
+
+
+
+```
+
+
+
+
+
+```{r}
+
+plot = filter(datos, word == "kuku" | word == "puku" | word == "tuku")
+ggplot(plot, aes(x=f2, y=f1, color = group, shape = group)) + 
+    geom_point(size=3, alpha=0.7)+
+  labs(title = "F1 and F2 of /u/ per group", y = "F1", x = "F2")
+
+
+```
+
+
+
+
+
+
+```{r}
+plot = filter(datos, word == "koko" | word == "poko" | word == "toko")
+ggplot(plot, aes(x=f2, y=f1, color = group, shape = group)) + 
+    geom_point(size=3, alpha=0.7)+
+  labs(title = "F1 and F2 of /o/ per group", y = "F1", x = "F2")
+
+```
+
+
+
 -->
 
 ## Hypothesis test
@@ -100,20 +340,7 @@ If you need help consider the following sources:
 
 # Conclusion
 
-<!-- 
-Revisit your hypotheses (refer to plots, figures, tables, statistical tests, 
-etc.)
+As seen on the plots, native English speakers seem to have longer lag VOT's than bilniguals. This is because Spanish has a short and lead lag, and English has short, long, and lead lag. 
 
-Reflect on the entire process. 
-What did you enjoy? What did you hate? What did you learn? 
-What would you do differently?
--->
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-</br></br>
+In relation with my initial hypothesis from Bradlow (1995) the values (F1 and F2) are slightly higher, therefore the present study seems to corroborate the findings. 

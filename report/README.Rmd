@@ -210,7 +210,6 @@ ggplot(plot, aes(x=word, y=f2, fill=group)) +
 ```
 
 
-
 ```{r}
 # Include some plots here
 
